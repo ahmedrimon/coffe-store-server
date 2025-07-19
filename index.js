@@ -26,7 +26,25 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+    //Document Raw Copy
+    // const database = client.db("sample_mflix");
+    
+    const coffeeCollection = client.db('coffeeDb')
+    const coffee = coffeeCollection.collection('coffee');
 
+    app.get('/coffee', async(req, res) => {
+        const cursor = coffee.find();
+      const allValues = await cursor.toArray();
+      res.send(allValues)
+    })
+
+    app.post('/coffee', async(req, res) => {
+      const newCoffee = req.body
+      console.log(newCoffee)
+      //direct copy to mongodb insert document
+      const result = await coffee.insertOne(newCoffee);
+      res.send(result);
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
